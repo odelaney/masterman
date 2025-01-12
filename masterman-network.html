@@ -1,0 +1,430 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+                <link href="lib/tom-select/tom-select.css" rel="stylesheet">
+                <script src="lib/tom-select/tom-select.complete.min.js"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 100%;
+                 height: 600px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+              <div id="filter-menu" class="card-header">
+                <div class="row no-gutters">
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'item')"
+                            id="select-item"
+                        >
+                        <option value="">Select a network item</option>
+                        <option value="edge">edge</option>
+                        <option value="node">node</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'property')"
+                            id="select-property"
+                        >
+                        <option value="">Select a property...</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            id="select-value"
+                        >
+                        <option value="">Select value(s)...</option>
+                    </select>
+                  </div>
+                  <div class="col-1 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="highlightFilter(filter);">Filter</button>
+                  </div>
+                  <div class="col-2 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="clearFilter(true)">Reset Selection</button>
+                  </div>
+                </div>
+              </div>
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+                  // explicitly using onItemAdd and this function as we need to save multiple values
+                  let updateValueFilter = function() {
+                      return function () {
+                      filter['value'].push(arguments[0])
+                      }
+                  }
+
+                  let valueControl = new TomSelect("#select-value",{
+                      maxItems: null,
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: updateValueFilter()
+                  });
+
+                  let addValues = function() {
+                      return function () {
+                          // clear the current value options and add the selected attribute values
+                          // tom-select handles duplicates
+                          let selectedProperty = arguments[0];
+                          valueControl.clear();
+                          valueControl.clearOptions();
+                          filter['value'] = []
+                          if (filter['item'] === 'node') {
+                              for (let each in allNodes) {
+                                  valueControl.addOption({
+                                      id:allNodes[each][selectedProperty],
+                                      title:allNodes[each][selectedProperty]
+                                  })
+                              }
+                          }
+                          else if (filter['item'] === 'edge') {
+                              for (let each in allEdges) {
+                                  valueControl.addOption({
+                                      id:allEdges[each][selectedProperty],
+                                      title:allEdges[each][selectedProperty]
+                                  })
+                              }
+                          }
+                      }
+                  };
+
+                  let propControl = new TomSelect("#select-property",{
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addValues()
+                  });
+
+                  let addProperties = function() {
+                      return function () {
+                          // loops through the selected network item and adds the attributes to dropdown
+                          // tom-select handles duplicates
+                          clearFilter(false)
+                          if (arguments[0] === 'edge') {
+                              for (let each in allEdges) {
+                                  if (allEdges.hasOwnProperty(each)) {
+                                      for (let eachProp in allEdges[each]) {
+                                          if (allEdges[each].hasOwnProperty(eachProp)) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          else if (arguments[0] === 'node') {
+                              for (let each in allNodes) {
+                                  if (allNodes.hasOwnProperty(each)) {
+                                      for (let eachProp in allNodes[each]) {
+                                          if (allNodes[each].hasOwnProperty(eachProp)
+                                              && (eachProp !== 'hidden' && eachProp !== 'savedLabel'
+                                                  && eachProp !== 'hiddenLabel')) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  };
+
+                  let itemControl = new TomSelect("#select-item",{
+                      create: false,
+                      sortField:{
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addProperties()
+                  });
+
+                  function clearFilter(reset) {
+                      // utility function to clear all the selected filter options
+                      // if reset is set to true, the existing filter will be removed
+                      // else, only the dropdown options are cleared
+                      propControl.clear();
+                      propControl.clearOptions();
+                      valueControl.clear();
+                      valueControl.clearOptions();
+                      filter = {
+                          item : '',
+                          property : '',
+                          value : []
+                      }
+                      if (reset) {
+                          itemControl.clear();
+                          filterHighlight({nodes: []})
+                      }
+                  }
+
+                  function updateFilter(value, key) {
+                      // key could be 'item' or 'property' and value is as selected in dropdown
+                      filter[key] = value
+                  }
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "yellow", "id": "Margaret Masterman", "label": "Margaret Masterman", "shape": "dot", "size": 10, "source": "address book", "title": "Description: Computational linguist and founder of the CLRU. Also founded Lucy Cavendish College, Cambridge.\nAddress: Cambridge"}, {"color": "#85B09A", "id": "Cambridge Language Research Unit", "label": "Cambridge Language Research Unit", "shape": "dot", "size": 10, "source": "address book", "title": "Description: Centre for research into Machine Translation, with greatest activity in the 1960s and 70s\nAddress: 20 Millington Road Cambridge"}, {"color": "pink", "id": "Cambridge Digital Humanities", "label": "Cambridge Digital Humanities", "shape": "dot", "size": 10, "source": "contemporary research", "title": "Description: Research group at Cambridge since the late 2010s\nAddress: Cambridge, UK"}, {"color": "green", "id": "National Science Foundation", "label": "National Science Foundation", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 1951 Constitution Ave, Washington D.C."}, {"color": "black", "id": "The Rev. William J. Alberts", "label": "The Rev. William J. Alberts", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Crest Episcopal Church, Lowell"}, {"color": "red", "id": "United States Air Force", "label": "United States Air Force", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Andrews Air Force Base, Washington D.C."}, {"color": "grey", "id": "Society of Motion Picture \u0026 Television Engineers", "label": "Society of Motion Picture \u0026 Television Engineers", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress:  55 West 42nd St. New York 3\u0026, N.Y."}, {"color": "grey", "id": "American Automobile Association", "label": "American Automobile Association", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 1712 G Street N.W., Washington D.C."}, {"color": "navy", "id": "American Documentation Institute", "label": "American Documentation Institute", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: School of Library Sciences, Cleveland, Ohio"}, {"color": "black", "id": "Irena Balinska", "label": "Irena Balinska", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 17 East 70th St, New York"}, {"color": "navy", "id": "Department of Mathematics at Syracuse University", "label": "Department of Mathematics at Syracuse University", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Syracuse, N.Y."}, {"color": "green", "id": "Vertol Aircraft Co.", "label": "Vertol Aircraft Co.", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Swarthmore"}, {"color": "navy", "id": "Morton Computing Lab", "label": "Morton Computing Lab", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "grey", "id": "Edo Computers \u0026 Automation", "label": "Edo Computers \u0026 Automation", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 815 Washington St, MA"}, {"color": "grey", "id": "Brentano\u0027s Inc. (Books)", "label": "Brentano\u0027s Inc. (Books)", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 586 5th Avenue, New York"}, {"color": "black", "id": "Mrs. Lea Boehnert", "label": "Mrs. Lea Boehnert", "shape": "dot", "size": 10, "source": "address book", "title": "Description: (Computer friend, of C. Mooers.\u0027)\nAddress: (Pentagon)"}, {"color": "navy", "id": "Franklin \u0026 Marshall College", "label": "Franklin \u0026 Marshall College", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Lancaster, Pa."}, {"color": "grey", "id": "Bristol City Lines", "label": "Bristol City Lines", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 1 Broadway, New York"}, {"color": "navy", "id": "Department of Speech at The Ohio State University", "label": "Department of Speech at The Ohio State University", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Columbus, Ohio"}, {"color": "purple", "id": "Bruderhof", "label": "Bruderhof", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Woodcrest, Rifton, New York"}, {"color": "grey", "id": "Carnegie Corp. of New York", "label": "Carnegie Corp. of New York", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 589 5th Avenue, New York"}, {"color": "grey", "id": "Human Relations Area Files", "label": "Human Relations Area Files", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 421 Humphrey St, New Haven, CT"}, {"color": "navy", "id": "Department of Mathematics at University of Maryland", "label": "Department of Mathematics at University of Maryland", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: College Park, Maryland"}, {"color": "black", "id": "Louis Cassells", "label": "Louis Cassells", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 6815 Mefoody Lane, Bethesda, MD"}, {"color": "grey", "id": "Colonial Chevrolet Co.", "label": "Colonial Chevrolet Co.", "shape": "dot", "size": 10, "source": "address book", "title": "Description: The CLRU appears to have purchased a 1953 Chevrolet Albinus Truck from this dealership in 1959. The truck was delivered to an address in Wilmington, Delaware\nAddress: 40th \u0026 Market Sts., Wilmington, DE"}, {"color": "black", "id": "Mr. Clarence Smith", "label": "Mr. Clarence Smith", "shape": "dot", "size": 10, "source": "address book", "title": "Description: Re: insurance\nAddress: "}, {"color": "green", "id": "Battelle Memorial Institute", "label": "Battelle Memorial Institute", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 505 King Avenue, Columbus, OH"}, {"color": "navy", "id": "Swarthmore College", "label": "Swarthmore College", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Swarthmore, PA"}, {"color": "navy", "id": "Department of Mathematics at Pennsylvania State University", "label": "Department of Mathematics at Pennsylvania State University", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: University Park, PA"}, {"color": "grey", "id": "Riggs National Bank", "label": "Riggs National Bank", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: DuPont Circle Branch, 1913 Massachusetts Ave N.W., Washington D.C."}, {"color": "navy", "id": "Department of East Asiatic Studies at the University of Toronto", "label": "Department of East Asiatic Studies at the University of Toronto", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Toronto, Canada"}, {"color": "navy", "id": "School of Business Administration at University of California Berkeley", "label": "School of Business Administration at University of California Berkeley", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Berkeley, CA"}, {"color": "green", "id": "RAND Corporation", "label": "RAND Corporation", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 1700 Main St, Santa Monica, CA"}, {"color": "grey", "id": "Department of Health, Education \u0026 Welfare", "label": "Department of Health, Education \u0026 Welfare", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Bethesda, MD"}, {"color": "grey", "id": "E.I. duPont Nemours \u0026 Co.", "label": "E.I. duPont Nemours \u0026 Co.", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Wilmington, DE"}, {"color": "navy", "id": "Georgetown University", "label": "Georgetown University", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Washington, D.C."}, {"color": "black", "id": "Jane \u0026 Jeff Hamilton", "label": "Jane \u0026 Jeff Hamilton", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 2559 Deepwood Dr., Foulkwoods, Wilmington, DE"}, {"color": "black", "id": "Zellig Harris", "label": "Zellig Harris", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 2222 N. 53rd St., Philadelphia, PA"}, {"color": "black", "id": "Bernet Hammell", "label": "Bernet Hammell", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 116 Prospect St, East Orange, N.J."}, {"color": "navy", "id": "Department of Philosophy at Princeton University", "label": "Department of Philosophy at Princeton University", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Princeton, N.J."}, {"color": "navy", "id": "Department of Marine Zoology at Yale University", "label": "Department of Marine Zoology at Yale University", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: New Haven, CT"}, {"color": "purple", "id": "Charles D. Church of the Epiphany", "label": "Charles D. Church of the Epiphany", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "navy", "id": "Centre for Documentation \u0026 Communication at Western Reserve University", "label": "Centre for Documentation \u0026 Communication at Western Reserve University", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Cleveland, OH"}, {"color": "black", "id": "Harry Latter", "label": "Harry Latter", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Roosevelt Hotel, New Orleans, LA"}, {"color": "black", "id": "Steve \u0026 Kay Lee", "label": "Steve \u0026 Kay Lee", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 5717 S. Harper Avenue, Chicago, IL"}, {"color": "green", "id": "I.B.M.", "label": "I.B.M.", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 590 Madison Avenue, New York"}, {"color": "grey", "id": "Magnavox Corporation", "label": "Magnavox Corporation", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 2255 Carmelina Avenue, Los Angeles, CA"}, {"color": "black", "id": "Florence Miller", "label": "Florence Miller", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 1407 Gilpin Avenue, Wilmington, DE"}, {"color": "red", "id": "Maguire Air Force Base", "label": "Maguire Air Force Base", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: RAymond 4-2100, Mt. Holly, NJ"}, {"color": "purple", "id": "St. Margaret\u0027s Convent", "label": "St. Margaret\u0027s Convent", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Boston,MA"}, {"color": "navy", "id": "University of Texas at Austin", "label": "University of Texas at Austin", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Austin, Texas"}, {"color": "grey", "id": "Zator Co.", "label": "Zator Co.", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 140 1/2 Mt. Auburn St., Cambridge, MA"}, {"color": "grey", "id": "Carnegie Tech", "label": "Carnegie Tech", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 5956 Phillips, Pittsburgh, PA"}, {"color": "navy", "id": "Institute for Cooperative Research at the University of Pennsylvania", "label": "Institute for Cooperative Research at the University of Pennsylvania", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Philadelphia, PA"}, {"color": "navy", "id": "Computation Laboratory at Harvard University", "label": "Computation Laboratory at Harvard University", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Cambridge, MA"}, {"color": "purple", "id": "Pendle Hill", "label": "Pendle Hill", "shape": "dot", "size": 10, "source": "address book", "title": "Description: A Quaker study, retreat, and conference centre\nAddress: Wallingford, PA"}, {"color": "purple", "id": "Virginia Theological Seminary", "label": "Virginia Theological Seminary", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Alexandria, VA"}, {"color": "navy", "id": "Department of Near Eastern Studies at the University of Michigan", "label": "Department of Near Eastern Studies at the University of Michigan", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Ann Arbor, MI"}, {"color": "navy", "id": "University of Washington", "label": "University of Washington", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Seattle, WA"}, {"color": "black", "id": "Bertrand Renaud", "label": "Bertrand Renaud", "shape": "dot", "size": 10, "source": "address book", "title": "Description: (Friendly garage)\nAddress: 409 Baltimore Pike, Morton, PA"}, {"color": "green", "id": "Ramo-Wooldridge Corporation", "label": "Ramo-Wooldridge Corporation", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Air Post Station, Los Angeles, CA"}, {"color": "red", "id": "Department of the Navy", "label": "Department of the Navy", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Washington, D.C."}, {"color": "red", "id": "U.S. Atomic Energy Commission", "label": "U.S. Atomic Energy Commission", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Washington, D.C."}, {"color": "red", "id": "National Bureau of Standards", "label": "National Bureau of Standards", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Washington, D.C."}, {"color": "navy", "id": "Department of History at Syracuse University", "label": "Department of History at Syracuse University", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Syracuse, N.Y."}, {"color": "red", "id": "Air Force Cambridge Research Center", "label": "Air Force Cambridge Research Center", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "navy", "id": "Applied Mathematics \u0026 Statistics Lab at Stanford University", "label": "Applied Mathematics \u0026 Statistics Lab at Stanford University", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Serra House, Stanford, CA"}, {"color": "grey", "id": "DuPont Co.", "label": "DuPont Co.", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Wilmington, DE"}, {"color": "purple", "id": "College of Preachers", "label": "College of Preachers", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Woodley Road, Washington, D.C."}, {"color": "black", "id": "Colin Wordley", "label": "Colin Wordley", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 558 86th St, Brooklyn, New York"}, {"color": "black", "id": "Frances Ellis", "label": "Frances Ellis", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: 3445 Vineville Avenue, Macon, GA"}, {"color": "navy", "id": "Wabash College", "label": "Wabash College", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: Crawfordsville, IA"}, {"color": "black", "id": "Joan Frye", "label": "Joan Frye", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: University Station 7980, Austin, TX"}, {"color": "purple", "id": "Tanguy Homesteads", "label": "Tanguy Homesteads", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: "}, {"color": "navy", "id": "Wellesley College", "label": "Wellesley College", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: Wellesley, MA"}, {"color": "grey", "id": "Hotel Martinique", "label": "Hotel Martinique", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: Broadway and 32nd St, New York"}, {"color": "navy", "id": "Department of Slavic Studies at Wayne State University", "label": "Department of Slavic Studies at Wayne State University", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: Detroit, MI"}, {"color": "navy", "id": "Columbia University", "label": "Columbia University", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: New York"}, {"color": "navy", "id": "Massachusetts Institute of Technology", "label": "Massachusetts Institute of Technology", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: Cambridge, MA"}, {"color": "grey", "id": "Hague Mouton", "label": "Hague Mouton", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: Publisher\nAddress: "}, {"color": "black", "id": "James T. McKinstry", "label": "James T. McKinstry", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: duPont Building, Wilmington, DE"}, {"color": "black", "id": "H.F. Pommer", "label": "H.F. Pommer", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: Meadville, PA"}, {"color": "black", "id": "Renee Robinson", "label": "Renee Robinson", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: "}, {"color": "black", "id": "Miss Mary Elizabeth Stevens", "label": "Miss Mary Elizabeth Stevens", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: 122 Hilltop Road, Silver Springs, MD"}, {"color": "grey", "id": "Documentation Inc.", "label": "Documentation Inc.", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: 2521 Connecticut Ave, N.W., Washington, D.C."}, {"color": "black", "id": "Scott Adams", "label": "Scott Adams", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Helen Brownson", "label": "Helen Brownson", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Lee Anna Embrey", "label": "Lee Anna Embrey", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Albert Leigh", "label": "Albert Leigh", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 35 Garrison Road, Brookline, MA"}, {"color": "black", "id": "Major Chuck Allard", "label": "Major Chuck Allard", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "red", "id": "Air Research and Development Command", "label": "Air Research and Development Command", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "red", "id": "Rome Air Development Center", "label": "Rome Air Development Center", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Griffiss Air Force Base, Rome, N.Y."}, {"color": "red", "id": "Office of Scientific Research", "label": "Office of Scientific Research", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Victor Ho Allen", "label": "Victor Ho Allen", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "J.H. Shera", "label": "J.H. Shera", "shape": "dot", "size": 10, "source": "address book", "title": "Description: editor at American Documentation Institute\nAddress: "}, {"color": "black", "id": "Karl Barus", "label": "Karl Barus", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "navy", "id": "Department of Electrical Engineering at Swarthmore College", "label": "Department of Electrical Engineering at Swarthmore College", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Swarthmore, PA"}, {"color": "black", "id": "Walter R. Baum", "label": "Walter R. Baum", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Steve Bilo", "label": "Steve Bilo", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Edmund C. Berkley", "label": "Edmund C. Berkley", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Luther J. Binkley", "label": "Luther J. Binkley", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 20 E. Washington Ave., Wernersville, PA"}, {"color": "black", "id": "Charles Hill", "label": "Charles Hill", "shape": "dot", "size": 10, "source": "address book", "title": "Description: (Agents: Bristol City Lines)\nAddress: 1 Broadway, NYC"}, {"color": "black", "id": "John W. Black", "label": "John W. Black", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Lloyd Morrisett", "label": "Lloyd Morrisett", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Edward L. Merrigan", "label": "Edward L. Merrigan", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Dr. Leslie L. Clark", "label": "Dr. Leslie L. Clark", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Prof. Leon W. Cohen", "label": "Prof. Leon W. Cohen", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Mr. Jones", "label": "Mr. Jones", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Joseph Cooper", "label": "Joseph Cooper", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "President Courtney-Smith", "label": "President Courtney-Smith", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Edward K. Cratsley", "label": "Edward K. Cratsley", "shape": "dot", "size": 10, "source": "address book", "title": "Description: Financial vice-president\nAddress: "}, {"color": "black", "id": "W. Prentice (Dean)", "label": "W. Prentice (Dean)", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Prof. H.B. Curry", "label": "Prof. H.B. Curry", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Mr. deLashmutt", "label": "Mr. deLashmutt", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Prof. Dobson", "label": "Prof. Dobson", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Leon E. Dostert", "label": "Leon E. Dostert", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "navy", "id": "Institute of Languages \u0026 Linguistics at Georgetown University", "label": "Institute of Languages \u0026 Linguistics at Georgetown University", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Washington D.C."}, {"color": "black", "id": "Robert M. Exner", "label": "Robert M. Exner", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 845 Kalmir Road, Washington, D.C."}, {"color": "black", "id": "Prof. Donald Kirby", "label": "Prof. Donald Kirby", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Ed and Nancy Feigenbaum", "label": "Ed and Nancy Feigenbaum", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "green", "id": "Computer Sciences Division at the RAND Corporation", "label": "Computer Sciences Division at the RAND Corporation", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 1700 Main St, Santa Monica, CA"}, {"color": "black", "id": "Dr. Robert \u0026 Mrs. Ester Felix", "label": "Dr. Robert \u0026 Mrs. Ester Felix", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: East Bexhill Dr., Kensington, MD"}, {"color": "grey", "id": "Institute of Mental Health", "label": "Institute of Mental Health", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Bethesda, MD"}, {"color": "black", "id": "George S. Fisher", "label": "George S. Fisher", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Paul Garvin", "label": "Paul Garvin", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Dr. David G. Hays", "label": "Dr. David G. Hays", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Prof. Carl (Peter) Hempel", "label": "Prof. Carl (Peter) Hempel", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Prof. Evelyn Hutchinson", "label": "Prof. Evelyn Hutchinson", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "The Rev. Dr. \u0026 Mrs. Kean", "label": "The Rev. Dr. \u0026 Mrs. Kean", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Charles D. Church of the Epiphany, 1517 G St. NW, Washington"}, {"color": "black", "id": "Allen Kent", "label": "Allen Kent", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Dr. Gilbert W. King", "label": "Dr. Gilbert W. King", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Juniper Ledge, Morningside Avenue, Briarcliff Manor, Westchester County, New York"}, {"color": "green", "id": "I.B.M. Research", "label": "I.B.M. Research", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Mohansic Laboratory, Yorktown, N.Y."}, {"color": "black", "id": "H.P. Luhn", "label": "H.P. Luhn", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Richard L. Libby", "label": "Richard L. Libby", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "C. Reinson", "label": "C. Reinson", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "George Shiner", "label": "George Shiner", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Oskar Reinson", "label": "Oskar Reinson", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: Rome ADC\nAddress: "}, {"color": "black", "id": "A.W. Lishawa", "label": "A.W. Lishawa", "shape": "dot", "size": 10, "source": "address book", "title": "Description: Sales manager at IBM\nAddress: "}, {"color": "black", "id": "Dr. Robert Hayes", "label": "Dr. Robert Hayes", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Sister Lydia Margaret", "label": "Sister Lydia Margaret", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: St. Margaret\ufffds Convent, Boston, MA"}, {"color": "black", "id": "Prof. Richard Martin", "label": "Prof. Richard Martin", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Calvin Mooers", "label": "Calvin Mooers", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Dr. Allen Newell", "label": "Dr. Allen Newell", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Herbert A. Simon", "label": "Herbert A. Simon", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "John O\u0027Connor", "label": "John O\u0027Connor", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "A.G. Oettinger", "label": "A.G. Oettinger", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Dan Wilson", "label": "Dan Wilson", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Charles Price", "label": "Charles Price", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Prof. Cliff L. Stanley", "label": "Prof. Cliff L. Stanley", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Prof. Herbert H. Paper", "label": "Prof. Herbert H. Paper", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Charles Parsons", "label": "Charles Parsons", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 1154 Massachusetts Ave, Cambridge, MA"}, {"color": "navy", "id": "Department of Far Eastern Languages at the University of Washington", "label": "Department of Far Eastern Languages at the University of Washington", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Seattle, WA"}, {"color": "black", "id": "Dr. Erwin Reifler", "label": "Dr. Erwin Reifler", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Dr. Don Swanson", "label": "Dr. Don Swanson", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Dr. F. Rigby", "label": "Dr. F. Rigby", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "red", "id": "Mathematical Sciences Division", "label": "Mathematical Sciences Division", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "red", "id": "Office of Naval Research", "label": "Office of Naval Research", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Washington, D.C."}, {"color": "black", "id": "Dr. Marshall Yovits", "label": "Dr. Marshall Yovits", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Dr. A.E. Ruark", "label": "Dr. A.E. Ruark", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 4101 Byeford County, Kensington, MD"}, {"color": "black", "id": "Mrs. Ida Rhodes", "label": "Mrs. Ida Rhodes", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Russell Kirsch", "label": "Russell Kirsch", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: "}, {"color": "black", "id": "Murray E. Sherry", "label": "Murray E. Sherry", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Prof. Patrick Suppes", "label": "Prof. Patrick Suppes", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Arnold Shostak", "label": "Arnold Shostak", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "red", "id": "Electronics Branch", "label": "Electronics Branch", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "red", "id": "Office of Naval Engineering", "label": "Office of Naval Engineering", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Eugene Wall", "label": "Eugene Wall", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Canon Theodore Wedel", "label": "Canon Theodore Wedel", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "black", "id": "Dr. Harold Wooster", "label": "Dr. Harold Wooster", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: 2108 Seminary Rd, Silver Springs, MD"}, {"color": "black", "id": "Victor Yngve", "label": "Victor Yngve", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: "}, {"color": "navy", "id": "Electronics Research Lab at Massachusetts Institute of Technology", "label": "Electronics Research Lab at Massachusetts Institute of Technology", "shape": "dot", "size": 10, "source": "address book", "title": "Description: \nAddress: Cambridge, MA"}, {"color": "black", "id": "Dr. Lawrence Hackstaff", "label": "Dr. Lawrence Hackstaff", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: 13 Mills Place, Crawfordsville, IA"}, {"color": "black", "id": "Euell \u0026 Frieda Gibbons", "label": "Euell \u0026 Frieda Gibbons", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: Tanguy Homesteads, Glen Mills, PA"}, {"color": "black", "id": "Ellen Haring", "label": "Ellen Haring", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: "}, {"color": "black", "id": "Amelia Janiotis", "label": "Amelia Janiotis", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: "}, {"color": "black", "id": "Prof. Harry Josselson", "label": "Prof. Harry Josselson", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: "}, {"color": "black", "id": "Arnold Koslow", "label": "Arnold Koslow", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: "}, {"color": "black", "id": "Dr. Dean W. Lytle", "label": "Dr. Dean W. Lytle", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: "}, {"color": "navy", "id": "Department of Electrical Engineering at the University of Washington", "label": "Department of Electrical Engineering at the University of Washington", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: Seattle, WA"}, {"color": "black", "id": "D. Lieberman", "label": "D. Lieberman", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: "}, {"color": "black", "id": "Mortimer Taube", "label": "Mortimer Taube", "shape": "dot", "size": 10, "source": "handwritten address", "title": "Description: \nAddress: "}, {"color": "pink", "id": "Orla Delaney", "label": "Orla Delaney", "shape": "dot", "size": 10, "source": "contemporary research", "title": "Description: PhD candidate and Research Assistant on the Masterman archive project\nAddress: St John\u0027s College, Cambridge"}, {"color": "pink", "id": "Caroline Bassett", "label": "Caroline Bassett", "shape": "dot", "size": 10, "source": "contemporary research", "title": "Description: Professor of Digital Humanities and PI on the Masterman archive project\nAddress: Corpus Christi College, Cambridge"}]);
+                  edges = new vis.DataSet([{"color": "black", "from": "Margaret Masterman", "to": "Cambridge Language Research Unit", "width": 1}, {"color": "black", "from": "Margaret Masterman", "to": "Cambridge Digital Humanities", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "National Science Foundation", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "The Rev. William J. Alberts", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "United States Air Force", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Society of Motion Picture \u0026 Television Engineers", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "American Automobile Association", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "American Documentation Institute", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Irena Balinska", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Department of Mathematics at Syracuse University", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Vertol Aircraft Co.", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Morton Computing Lab", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Edo Computers \u0026 Automation", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Brentano\u0027s Inc. (Books)", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Mrs. Lea Boehnert", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Franklin \u0026 Marshall College", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Bristol City Lines", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Department of Speech at The Ohio State University", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Bruderhof", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Carnegie Corp. of New York", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Human Relations Area Files", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Department of Mathematics at University of Maryland", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Louis Cassells", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Colonial Chevrolet Co.", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Mr. Clarence Smith", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Battelle Memorial Institute", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Swarthmore College", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Department of Mathematics at Pennsylvania State University", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Riggs National Bank", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Department of East Asiatic Studies at the University of Toronto", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "School of Business Administration at University of California Berkeley", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "RAND Corporation", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Department of Health, Education \u0026 Welfare", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "E.I. duPont Nemours \u0026 Co.", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Georgetown University", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Jane \u0026 Jeff Hamilton", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Zellig Harris", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Bernet Hammell", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Department of Philosophy at Princeton University", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Department of Marine Zoology at Yale University", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Charles D. Church of the Epiphany", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Centre for Documentation \u0026 Communication at Western Reserve University", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Harry Latter", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Steve \u0026 Kay Lee", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "I.B.M.", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Magnavox Corporation", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Florence Miller", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Maguire Air Force Base", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "St. Margaret\u0027s Convent", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "University of Texas at Austin", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Zator Co.", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Carnegie Tech", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Institute for Cooperative Research at the University of Pennsylvania", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Computation Laboratory at Harvard University", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Pendle Hill", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Virginia Theological Seminary", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Department of Near Eastern Studies at the University of Michigan", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "University of Washington", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Bertrand Renaud", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Ramo-Wooldridge Corporation", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Department of the Navy", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "U.S. Atomic Energy Commission", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "National Bureau of Standards", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Department of History at Syracuse University", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Air Force Cambridge Research Center", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Applied Mathematics \u0026 Statistics Lab at Stanford University", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "DuPont Co.", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "College of Preachers", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Colin Wordley", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Frances Ellis", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Wabash College", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Joan Frye", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Tanguy Homesteads", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Wellesley College", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Hotel Martinique", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Department of Slavic Studies at Wayne State University", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Columbia University", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Massachusetts Institute of Technology", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Hague Mouton", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "James T. McKinstry", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "H.F. Pommer", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Renee Robinson", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Miss Mary Elizabeth Stevens", "width": 1}, {"color": "black", "from": "Cambridge Language Research Unit", "to": "Documentation Inc.", "width": 1}, {"color": "black", "from": "Scott Adams", "to": "National Science Foundation", "width": 1}, {"color": "black", "from": "National Science Foundation", "to": "Helen Brownson", "width": 1}, {"color": "black", "from": "National Science Foundation", "to": "Lee Anna Embrey", "width": 1}, {"color": "black", "from": "National Science Foundation", "to": "Albert Leigh", "width": 1}, {"color": "black", "from": "Major Chuck Allard", "to": "Air Research and Development Command", "width": 1}, {"color": "black", "from": "United States Air Force", "to": "Air Research and Development Command", "width": 1}, {"color": "black", "from": "United States Air Force", "to": "Rome Air Development Center", "width": 1}, {"color": "black", "from": "United States Air Force", "to": "Office of Scientific Research", "width": 1}, {"color": "black", "from": "Victor Ho Allen", "to": "Society of Motion Picture \u0026 Television Engineers", "width": 1}, {"color": "black", "from": "American Documentation Institute", "to": "J.H. Shera", "width": 1}, {"color": "black", "from": "Karl Barus", "to": "Department of Electrical Engineering at Swarthmore College", "width": 1}, {"color": "black", "from": "Walter R. Baum", "to": "Department of Mathematics at Syracuse University", "width": 1}, {"color": "black", "from": "Department of Electrical Engineering at Swarthmore College", "to": "Swarthmore College", "width": 1}, {"color": "black", "from": "Steve Bilo", "to": "Vertol Aircraft Co.", "width": 1}, {"color": "black", "from": "Steve Bilo", "to": "Morton Computing Lab", "width": 1}, {"color": "black", "from": "Edmund C. Berkley", "to": "Edo Computers \u0026 Automation", "width": 1}, {"color": "black", "from": "Luther J. Binkley", "to": "Franklin \u0026 Marshall College", "width": 1}, {"color": "black", "from": "Bristol City Lines", "to": "Charles Hill", "width": 1}, {"color": "black", "from": "John W. Black", "to": "Department of Speech at The Ohio State University", "width": 1}, {"color": "black", "from": "Carnegie Corp. of New York", "to": "Lloyd Morrisett", "width": 1}, {"color": "black", "from": "Carnegie Corp. of New York", "to": "Edward L. Merrigan", "width": 1}, {"color": "black", "from": "Dr. Leslie L. Clark", "to": "Human Relations Area Files", "width": 1}, {"color": "black", "from": "Prof. Leon W. Cohen", "to": "Department of Mathematics at University of Maryland", "width": 1}, {"color": "black", "from": "Colonial Chevrolet Co.", "to": "Mr. Jones", "width": 1}, {"color": "black", "from": "Joseph Cooper", "to": "Battelle Memorial Institute", "width": 1}, {"color": "black", "from": "President Courtney-Smith", "to": "Swarthmore College", "width": 1}, {"color": "black", "from": "Swarthmore College", "to": "Edward K. Cratsley", "width": 1}, {"color": "black", "from": "Swarthmore College", "to": "W. Prentice (Dean)", "width": 1}, {"color": "black", "from": "Prof. H.B. Curry", "to": "Department of Mathematics at Pennsylvania State University", "width": 1}, {"color": "black", "from": "Mr. deLashmutt", "to": "Riggs National Bank", "width": 1}, {"color": "black", "from": "Prof. Dobson", "to": "Department of East Asiatic Studies at the University of Toronto", "width": 1}, {"color": "black", "from": "Leon E. Dostert", "to": "Institute of Languages \u0026 Linguistics at Georgetown University", "width": 1}, {"color": "black", "from": "Institute of Languages \u0026 Linguistics at Georgetown University", "to": "Georgetown University", "width": 1}, {"color": "black", "from": "Robert M. Exner", "to": "Department of Mathematics at Syracuse University", "width": 1}, {"color": "black", "from": "Department of Mathematics at Syracuse University", "to": "Prof. Donald Kirby", "width": 1}, {"color": "black", "from": "Ed and Nancy Feigenbaum", "to": "School of Business Administration at University of California Berkeley", "width": 1}, {"color": "black", "from": "Ed and Nancy Feigenbaum", "to": "Computer Sciences Division at the RAND Corporation", "width": 1}, {"color": "black", "from": "Computer Sciences Division at the RAND Corporation", "to": "RAND Corporation", "width": 1}, {"color": "black", "from": "Dr. Robert \u0026 Mrs. Ester Felix", "to": "Institute of Mental Health", "width": 1}, {"color": "black", "from": "Institute of Mental Health", "to": "Department of Health, Education \u0026 Welfare", "width": 1}, {"color": "black", "from": "George S. Fisher", "to": "E.I. duPont Nemours \u0026 Co.", "width": 1}, {"color": "black", "from": "Paul Garvin", "to": "Georgetown University", "width": 1}, {"color": "black", "from": "RAND Corporation", "to": "Dr. David G. Hays", "width": 1}, {"color": "black", "from": "Prof. Carl (Peter) Hempel", "to": "Department of Philosophy at Princeton University", "width": 1}, {"color": "black", "from": "Prof. Evelyn Hutchinson", "to": "Department of Marine Zoology at Yale University", "width": 1}, {"color": "black", "from": "The Rev. Dr. \u0026 Mrs. Kean", "to": "Charles D. Church of the Epiphany", "width": 1}, {"color": "black", "from": "Allen Kent", "to": "Centre for Documentation \u0026 Communication at Western Reserve University", "width": 1}, {"color": "black", "from": "Dr. Gilbert W. King", "to": "I.B.M. Research", "width": 1}, {"color": "black", "from": "I.B.M. Research", "to": "I.B.M.", "width": 1}, {"color": "black", "from": "I.B.M. Research", "to": "H.P. Luhn", "width": 1}, {"color": "black", "from": "Richard L. Libby", "to": "Rome Air Development Center", "width": 1}, {"color": "black", "from": "Rome Air Development Center", "to": "C. Reinson", "width": 1}, {"color": "black", "from": "Rome Air Development Center", "to": "George Shiner", "width": 1}, {"color": "black", "from": "Rome Air Development Center", "to": "Oskar Reinson", "width": 1}, {"color": "black", "from": "A.W. Lishawa", "to": "I.B.M.", "width": 1}, {"color": "black", "from": "Magnavox Corporation", "to": "Dr. Robert Hayes", "width": 1}, {"color": "black", "from": "Sister Lydia Margaret", "to": "St. Margaret\u0027s Convent", "width": 1}, {"color": "black", "from": "Prof. Richard Martin", "to": "University of Texas at Austin", "width": 1}, {"color": "black", "from": "Calvin Mooers", "to": "Zator Co.", "width": 1}, {"color": "black", "from": "Dr. Allen Newell", "to": "Carnegie Tech", "width": 1}, {"color": "black", "from": "Carnegie Tech", "to": "Herbert A. Simon", "width": 1}, {"color": "black", "from": "John O\u0027Connor", "to": "Institute for Cooperative Research at the University of Pennsylvania", "width": 1}, {"color": "black", "from": "A.G. Oettinger", "to": "Computation Laboratory at Harvard University", "width": 1}, {"color": "black", "from": "Pendle Hill", "to": "Dan Wilson", "width": 1}, {"color": "black", "from": "Charles Price", "to": "Virginia Theological Seminary", "width": 1}, {"color": "black", "from": "Virginia Theological Seminary", "to": "Prof. Cliff L. Stanley", "width": 1}, {"color": "black", "from": "Prof. Herbert H. Paper", "to": "Department of Near Eastern Studies at the University of Michigan", "width": 1}, {"color": "black", "from": "Charles Parsons", "to": "Department of Far Eastern Languages at the University of Washington", "width": 1}, {"color": "black", "from": "Dr. Erwin Reifler", "to": "Department of Far Eastern Languages at the University of Washington", "width": 1}, {"color": "black", "from": "Department of Far Eastern Languages at the University of Washington", "to": "University of Washington", "width": 1}, {"color": "black", "from": "Ramo-Wooldridge Corporation", "to": "Dr. Don Swanson", "width": 1}, {"color": "black", "from": "Dr. F. Rigby", "to": "Mathematical Sciences Division", "width": 1}, {"color": "black", "from": "Mathematical Sciences Division", "to": "Office of Naval Research", "width": 1}, {"color": "black", "from": "Office of Naval Research", "to": "Department of the Navy", "width": 1}, {"color": "black", "from": "Office of Naval Research", "to": "Dr. Marshall Yovits", "width": 1}, {"color": "black", "from": "Dr. A.E. Ruark", "to": "U.S. Atomic Energy Commission", "width": 1}, {"color": "black", "from": "Mrs. Ida Rhodes", "to": "National Bureau of Standards", "width": 1}, {"color": "black", "from": "Mrs. Ida Rhodes", "to": "Department of History at Syracuse University", "width": 1}, {"color": "black", "from": "National Bureau of Standards", "to": "Russell Kirsch", "width": 1}, {"color": "black", "from": "Murray E. Sherry", "to": "Air Force Cambridge Research Center", "width": 1}, {"color": "black", "from": "Prof. Patrick Suppes", "to": "Applied Mathematics \u0026 Statistics Lab at Stanford University", "width": 1}, {"color": "black", "from": "Arnold Shostak", "to": "Electronics Branch", "width": 1}, {"color": "black", "from": "Electronics Branch", "to": "Office of Naval Engineering", "width": 1}, {"color": "black", "from": "Office of Naval Engineering", "to": "Department of the Navy", "width": 1}, {"color": "black", "from": "Eugene Wall", "to": "DuPont Co.", "width": 1}, {"color": "black", "from": "Canon Theodore Wedel", "to": "College of Preachers", "width": 1}, {"color": "black", "from": "Dr. Harold Wooster", "to": "Office of Scientific Research", "width": 1}, {"color": "black", "from": "Victor Yngve", "to": "Electronics Research Lab at Massachusetts Institute of Technology", "width": 1}, {"color": "black", "from": "Electronics Research Lab at Massachusetts Institute of Technology", "to": "Massachusetts Institute of Technology", "width": 1}, {"color": "black", "from": "Dr. Lawrence Hackstaff", "to": "Wabash College", "width": 1}, {"color": "black", "from": "Euell \u0026 Frieda Gibbons", "to": "Tanguy Homesteads", "width": 1}, {"color": "black", "from": "Ellen Haring", "to": "Wellesley College", "width": 1}, {"color": "black", "from": "Amelia Janiotis", "to": "Department of Slavic Studies at Wayne State University", "width": 1}, {"color": "black", "from": "Department of Slavic Studies at Wayne State University", "to": "Prof. Harry Josselson", "width": 1}, {"color": "black", "from": "Arnold Koslow", "to": "Columbia University", "width": 1}, {"color": "black", "from": "Dr. Dean W. Lytle", "to": "Department of Electrical Engineering at the University of Washington", "width": 1}, {"color": "black", "from": "Department of Electrical Engineering at the University of Washington", "to": "University of Washington", "width": 1}, {"color": "black", "from": "D. Lieberman", "to": "Massachusetts Institute of Technology", "width": 1}, {"color": "black", "from": "Mortimer Taube", "to": "Documentation Inc.", "width": 1}, {"color": "black", "from": "Orla Delaney", "to": "Cambridge Digital Humanities", "width": 1}, {"color": "black", "from": "Caroline Bassett", "to": "Cambridge Digital Humanities", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
