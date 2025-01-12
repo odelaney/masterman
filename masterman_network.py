@@ -32,7 +32,7 @@ def visualise_graph(graph):
     net.from_nx(graph)
     net.force_atlas_2based()
 
-    net.save_graph("masterman-network.html")
+    net.save_graph("index.html")
 
 nodes = create_node_list(nodes_data)
 edges = create_edges_list(edges_data)
